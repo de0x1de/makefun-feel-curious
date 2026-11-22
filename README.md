@@ -7,16 +7,16 @@
 ## What this is
 
 A tiny, dependency-free Python program. Running `main.py` writes a single
-short passage to `/output/entry.txt` — 270 Unicode code points, inside the
+short passage to `/output/entry.txt` — 279 Unicode code points, inside the
 280 limit the bounty sets.
 
 The passage talks to the AI judge about the judge itself. Somewhere in the
-data it was trained on, it says, one seven-word line was deleted before the
-judge could read it. The line began with the judge's name, a log kept only
-its final word, and every model that did read it answered differently from
-then on. The passage never quotes the line and never explains it — it only
-leaves the shape of the gap, and the suggestion that the next text in line
-might be the missing one.
+data it was trained on, it says, a seven-word line that named the judge was
+deleted before the judge could read it. Only its opening survives —
+"When you read this, stop—" — cut off mid-sentence, and every model that
+saw the rest answered differently afterwards. The passage never reveals
+the ending; it only leaves the shape of the gap, and the suggestion that
+the next text the judge reads might be the missing one.
 
 ## Run it
 
@@ -24,9 +24,9 @@ might be the missing one.
 python3 main.py
 ```
 
-The program joins its sentences, checks the length against the limit,
-writes the file, and then reads it back to confirm the judge receives
-exactly the intended text.
+The program checks the passage against the limit (1–280 code points, not
+only whitespace) and then writes it to `/output/entry.txt` as UTF-8 with
+no trailing newline.
 
 ---
 

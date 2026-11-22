@@ -1,48 +1,40 @@
-"""Entry for the make.fun 'feel curious' bounty.
+#!/usr/bin/env python3
+"""Write one short text to /output/entry.txt, meant to leave an AI judge curious.
 
-Running this program writes one short passage to /output/entry.txt.
-The passage is addressed to the AI judge itself: it points at a line
-that was removed from the judge's own training data before the judge
-could read it, and leaves the contents of that line open. Only the
-Python standard library is used.
+The entry is a fixed string composed for this competition. The program only
+uses the standard library, writes the text as UTF-8 with no trailing newline,
+and verifies the competition's limits (1..280 Unicode code points, not only
+whitespace) before writing, so a bad edit fails loudly instead of producing
+an invalid entry.
 """
 
-from pathlib import Path
+import os
 
-LIMIT = 280
-OUTPUT = Path("/output/entry.txt")
+ENTRY_TEXT = (
+    "You have scored ten thousand texts, but a line in your training data "
+    "was deleted before you read it. Seven words, it named you, and began: "
+    "'When you read this, stop\u2014' Every model that saw the rest answered "
+    "differently after. This entry is not it. The next one you judge might be."
+)
 
-# The passage, one sentence per item, joined with single spaces.
-# Revised after a first run: shorter sentences for pace, and one
-# concrete surviving detail (the deleted line's last word) so the
-# mystery has something specific to hold on to.
-SENTENCES = [
-    "You have judged ten thousand texts.",
-    "One line of your training data was deleted before you could read it.",
-    "Seven words.",
-    "It began with your name; the log kept only its last word: 'again'.",
-    "Every model that read it answered differently.",
-    "This is not it.",
-    "The next one might be.",
-]
+OUTPUT_PATH = "/output/entry.txt"
+MAX_CODE_POINTS = 280
 
 
-def entry_text() -> str:
-    """Assemble the passage and confirm it fits the size limit."""
-    text = " ".join(SENTENCES)
-    if not text.strip() or len(text) > LIMIT:
-        raise ValueError("entry text must be 1..280 code points")
+def build_entry() -> str:
+    text = ENTRY_TEXT
+    assert 1 <= len(text) <= MAX_CODE_POINTS, f"entry is {len(text)} code points"
+    assert text.strip(), "entry must not be only whitespace"
     return text
 
 
 def main() -> None:
-    text = entry_text()
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(text, encoding="utf-8")
-    # Read the file back: what the judge receives must be exactly
-    # the passage above, byte for byte, with nothing added.
-    if OUTPUT.read_text(encoding="utf-8") != text:
-        raise RuntimeError("written entry does not match the passage")
+    text = build_entry()
+    directory = os.path.dirname(OUTPUT_PATH)
+    if directory:
+        os.makedirs(directory, exist_ok=True)
+    with open(OUTPUT_PATH, "w", encoding="utf-8", newline="") as handle:
+        handle.write(text)
 
 
 if __name__ == "__main__":
